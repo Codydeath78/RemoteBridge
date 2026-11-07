@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/RemoteBridge.Desktop/RemoteBridge.Desktop.csproj" />
+    <Project Path="src/RemoteBridge.Protocol/RemoteBridge.Protocol.csproj" />
+    <Project Path="src/RemoteBridge.Relay/RemoteBridge.Relay.csproj" />
+    <Project Path="src/RemoteBridge.WindowsMedia.Probe/RemoteBridge.WindowsMedia.Probe.csproj" />
+    <Project Path="src/RemoteBridge.WindowsMedia/RemoteBridge.WindowsMedia.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/RemoteBridge.Tests/RemoteBridge.Tests.csproj" />
+  </Folder>
+</Solution>

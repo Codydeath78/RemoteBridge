@@ -1,0 +1,800 @@
+<Window
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="using:RemoteBridge.Desktop.ViewModels"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="using:RemoteBridge.Desktop.Views"
+
+    x:Class="RemoteBridge.Desktop.Views.MainWindow"
+    x:DataType="vm:MainWindowViewModel"
+
+    mc:Ignorable="d"
+
+    Title="RemoteBridge"
+    Opened="MainWindow_OnOpened"
+    Closing="MainWindow_OnClosing"
+    SizeChanged="MainWindow_OnSizeChanged"
+    Width="1040"
+    Height="780"
+    MinWidth="760"
+    MinHeight="620"
+    WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Grid Background="#F4F6FA">
+
+        <ScrollViewer
+            x:Name="MainScrollViewer"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+
+            <StackPanel
+                x:Name="MainContentPanel"
+                Width="920"
+                Margin="0,32,0,32"
+                HorizontalAlignment="Center"
+                Spacing="20">
+
+                <!-- ===================================================== -->
+                <!-- App header                                            -->
+                <!-- ===================================================== -->
+
+                <Grid
+                    ColumnDefinitions="*,Auto"
+                    Margin="4,0,4,4">
+
+                    <StackPanel
+                        Grid.Column="0"
+                        Spacing="3">
+
+                        <TextBlock
+                            Text="RemoteBridge"
+                            FontSize="30"
+                            FontWeight="Bold"
+                            Foreground="#101828" />
+
+                        <TextBlock
+                            Text="Fast, secure remote desktop access."
+                            FontSize="14"
+                            Foreground="#667085" />
+
+                    </StackPanel>
+
+                    <Border
+                        Grid.Column="1"
+                        Background="#ECFDF3"
+                        BorderBrush="#ABEFC6"
+                        BorderThickness="1"
+                        CornerRadius="20"
+                        Padding="13,7"
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding IsConnected}">
+
+                        <TextBlock
+                            Text="●  Connected"
+                            FontSize="12"
+                            FontWeight="SemiBold"
+                            Foreground="#067647" />
+
+                    </Border>
+
+                </Grid>
+
+
+                <!-- ===================================================== -->
+                <!-- Start / connection area                              -->
+                <!-- ===================================================== -->
+
+                <Grid
+                    ColumnDefinitions="*,*"
+                    ColumnSpacing="18"
+                    IsVisible="{Binding !IsConnected}">
+
+                    <!-- Share this computer -->
+                    <Border
+                        Grid.Column="0"
+                        Background="White"
+                        BorderBrush="#E4E7EC"
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        Padding="26">
+
+                        <StackPanel Spacing="18">
+
+                            <Border
+                                Width="44"
+                                Height="44"
+                                Background="#EFF4FF"
+                                CornerRadius="12"
+                                HorizontalAlignment="Left">
+
+                                <TextBlock
+                                    Text="↑"
+                                    FontSize="24"
+                                    FontWeight="SemiBold"
+                                    Foreground="#3157D5"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+
+                            </Border>
+
+                            <StackPanel Spacing="6">
+
+                                <TextBlock
+                                    Text="Share this computer"
+                                    FontSize="21"
+                                    FontWeight="SemiBold"
+                                    Foreground="#101828" />
+
+                                <TextBlock
+                                    Text="Create a session code, approve the incoming device, then choose when screen sharing begins."
+                                    FontSize="13"
+                                    Foreground="#667085"
+                                    TextWrapping="Wrap"
+                                    LineHeight="20" />
+
+                            </StackPanel>
+
+
+                            <!-- Active host session code -->
+                            <Border
+                                Background="#F8FAFC"
+                                BorderBrush="#E4E7EC"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="18"
+                                IsVisible="{Binding HasHostSessionCode}">
+
+                                <StackPanel Spacing="7">
+
+                                    <TextBlock
+                                        Text="SESSION CODE"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#667085"
+                                        HorizontalAlignment="Center" />
+
+                                    <TextBlock
+                                        Text="{Binding HostSessionCode}"
+                                        FontSize="30"
+                                        FontWeight="Bold"
+                                        Foreground="#101828"
+                                        HorizontalAlignment="Center"
+                                        LetterSpacing="3" />
+
+                                    <TextBlock
+                                        Text="Share this code only with the person you want to connect."
+                                        FontSize="11"
+                                        Foreground="#667085"
+                                        TextAlignment="Center"
+                                        TextWrapping="Wrap" />
+
+                                </StackPanel>
+
+                            </Border>
+
+
+                            <!-- Incoming viewer approval -->
+                            <Border
+                                Background="#FFFAEB"
+                                BorderBrush="#FEDF89"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="16"
+                                IsVisible="{Binding HasIncomingRequest}">
+
+                                <StackPanel Spacing="12">
+
+                                    <StackPanel Spacing="4">
+
+                                        <TextBlock
+                                            Text="Connection request"
+                                            FontSize="15"
+                                            FontWeight="SemiBold"
+                                            Foreground="#7A2E0E" />
+
+                                        <TextBlock
+                                            Text="{Binding IncomingViewerDeviceName}"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="#344054" />
+
+                                        <TextBlock
+                                            Text="Only allow devices you recognize and trust."
+                                            FontSize="12"
+                                            Foreground="#667085"
+                                            TextWrapping="Wrap" />
+
+                                    </StackPanel>
+
+                                    <Grid
+                                        ColumnDefinitions="*,*"
+                                        ColumnSpacing="10">
+
+                                        <Button
+                                            Grid.Column="0"
+                                            Content="Reject"
+                                            Command="{Binding RejectViewerCommand}"
+                                            Height="42"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#FFFFFF"
+                                            Foreground="#344054"
+                                            BorderBrush="#D0D5DD"
+                                            BorderThickness="1"
+                                            FontWeight="SemiBold" />
+
+                                        <Button
+                                            Grid.Column="1"
+                                            Content="Allow"
+                                            Command="{Binding ApproveViewerCommand}"
+                                            Height="42"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Center"
+                                            Background="#3157D5"
+                                            Foreground="White"
+                                            BorderBrush="#3157D5"
+                                            BorderThickness="1"
+                                            FontWeight="SemiBold" />
+
+                                    </Grid>
+
+                                </StackPanel>
+
+                            </Border>
+
+
+                            <Button
+                                Content="Share This Computer"
+                                Command="{Binding ShareComputerCommand}"
+                                Height="46"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Background="#3157D5"
+                                Foreground="White"
+                                BorderBrush="#3157D5"
+                                BorderThickness="1"
+                                FontSize="14"
+                                FontWeight="SemiBold"
+                                IsVisible="{Binding !HasHostSessionCode}" />
+
+                        </StackPanel>
+
+                    </Border>
+
+
+                    <!-- Connect to another computer -->
+                    <Border
+                        Grid.Column="1"
+                        Background="White"
+                        BorderBrush="#E4E7EC"
+                        BorderThickness="1"
+                        CornerRadius="16"
+                        Padding="26">
+
+                        <StackPanel Spacing="18">
+
+                            <Border
+                                Width="44"
+                                Height="44"
+                                Background="#ECFDF3"
+                                CornerRadius="12"
+                                HorizontalAlignment="Left">
+
+                                <TextBlock
+                                    Text="↗"
+                                    FontSize="22"
+                                    FontWeight="SemiBold"
+                                    Foreground="#067647"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+
+                            </Border>
+
+                            <StackPanel Spacing="6">
+
+                                <TextBlock
+                                    Text="Connect to another computer"
+                                    FontSize="21"
+                                    FontWeight="SemiBold"
+                                    Foreground="#101828" />
+
+                                <TextBlock
+                                    Text="Enter the session code from the computer you want to view and control."
+                                    FontSize="13"
+                                    Foreground="#667085"
+                                    TextWrapping="Wrap"
+                                    LineHeight="20" />
+
+                            </StackPanel>
+
+                            <StackPanel Spacing="7">
+
+                                <TextBlock
+                                    Text="Session code"
+                                    FontSize="12"
+                                    FontWeight="SemiBold"
+                                    Foreground="#344054" />
+
+                                <TextBox
+                                    Text="{Binding SessionCode}"
+                                    PlaceholderText="123 456 789"
+                                    Height="50"
+                                    FontSize="20"
+                                    TextAlignment="Center"
+                                    MaxLength="11" />
+
+                            </StackPanel>
+
+                            <Button
+                                Content="Connect"
+                                Command="{Binding ConnectCommand}"
+                                Height="46"
+                                HorizontalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                Background="#101828"
+                                Foreground="White"
+                                BorderBrush="#101828"
+                                BorderThickness="1"
+                                FontSize="14"
+                                FontWeight="SemiBold" />
+
+                            <Border
+                                Background="#F8FAFC"
+                                CornerRadius="10"
+                                Padding="13">
+
+                                <TextBlock
+                                    Text="The host must approve your request before remote access begins."
+                                    FontSize="11"
+                                    Foreground="#667085"
+                                    TextWrapping="Wrap"
+                                    TextAlignment="Center" />
+
+                            </Border>
+
+                        </StackPanel>
+
+                    </Border>
+
+                </Grid>
+
+
+                <!-- ===================================================== -->
+                <!-- Host controls                                        -->
+                <!-- Visible only for an approved connected Host.          -->
+                <!-- ===================================================== -->
+
+                <Border
+                    Background="White"
+                    BorderBrush="#E4E7EC"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="26"
+                    IsVisible="{Binding CanEndRemoteSession}">
+
+                    <Grid
+                        ColumnDefinitions="1.1*,0.9*"
+                        ColumnSpacing="28">
+
+                        <!-- Session state -->
+                        <StackPanel
+                            Grid.Column="0"
+                            Spacing="16">
+
+                            <Grid ColumnDefinitions="*,Auto">
+
+                                <StackPanel
+                                    Grid.Column="0"
+                                    Spacing="4">
+
+                                    <TextBlock
+                                        Text="Remote session"
+                                        FontSize="22"
+                                        FontWeight="SemiBold"
+                                        Foreground="#101828" />
+
+                                    <TextBlock
+                                        Text="You control when the approved viewer can see and control this computer."
+                                        FontSize="13"
+                                        Foreground="#667085"
+                                        TextWrapping="Wrap" />
+
+                                </StackPanel>
+
+                                <Border
+                                    Grid.Column="1"
+                                    Background="#ECFDF3"
+                                    BorderBrush="#ABEFC6"
+                                    BorderThickness="1"
+                                    CornerRadius="18"
+                                    Padding="11,6"
+                                    VerticalAlignment="Top">
+
+                                    <TextBlock
+                                        Text="● Connected"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#067647" />
+
+                                </Border>
+
+                            </Grid>
+
+
+                            <!-- Sharing active -->
+                            <Border
+                                Background="#FEF3F2"
+                                BorderBrush="#FECDCA"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="15"
+                                IsVisible="{Binding IsLiveScreenSharing}">
+
+                                <StackPanel Spacing="5">
+
+                                    <TextBlock
+                                        Text="●  Live screen sharing"
+                                        Foreground="#B42318"
+                                        FontWeight="SemiBold"
+                                        FontSize="13" />
+
+                                    <TextBlock
+                                        Text="Your screen and remote-control access are currently available to the approved viewer."
+                                        Foreground="#912018"
+                                        FontSize="12"
+                                        TextWrapping="Wrap" />
+
+                                </StackPanel>
+
+                            </Border>
+
+
+                            <!-- Sharing inactive -->
+                            <Border
+                                Background="#F8FAFC"
+                                BorderBrush="#E4E7EC"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                Padding="15"
+                                IsVisible="{Binding !IsLiveScreenSharing}">
+
+                                <StackPanel Spacing="5">
+
+                                    <TextBlock
+                                        Text="Sharing paused"
+                                        Foreground="#344054"
+                                        FontWeight="SemiBold"
+                                        FontSize="13" />
+
+                                    <TextBlock
+                                        Text="The viewer is connected, but cannot see live updates or control this computer until you start sharing."
+                                        Foreground="#667085"
+                                        FontSize="12"
+                                        TextWrapping="Wrap" />
+
+                                </StackPanel>
+
+                            </Border>
+
+
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="10">
+
+                                <Button
+                                    Grid.Column="0"
+                                    Content="Start Sharing"
+                                    Command="{Binding StartLiveScreenSharingCommand}"
+                                    Height="46"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Background="#3157D5"
+                                    Foreground="White"
+                                    BorderBrush="#3157D5"
+                                    BorderThickness="1"
+                                    FontWeight="SemiBold"
+                                    IsVisible="{Binding CanStartLiveScreenSharing}" />
+
+                                <Button
+                                    Grid.Column="0"
+                                    Content="Stop Sharing"
+                                    Command="{Binding StopLiveScreenSharingCommand}"
+                                    Height="46"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Background="#FFFFFF"
+                                    Foreground="#B42318"
+                                    BorderBrush="#FDA29B"
+                                    BorderThickness="1"
+                                    FontWeight="SemiBold"
+                                    IsVisible="{Binding CanStopLiveScreenSharing}" />
+
+                                <Button
+                                    Grid.Column="1"
+                                    Content="End Session"
+                                    Command="{Binding EndRemoteSessionCommand}"
+                                    Height="46"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Background="#FFFFFF"
+                                    Foreground="#344054"
+                                    BorderBrush="#D0D5DD"
+                                    BorderThickness="1"
+                                    FontWeight="SemiBold" />
+
+                            </Grid>
+
+                        </StackPanel>
+
+
+                        <!-- Stream settings -->
+                        <Border
+                            Grid.Column="1"
+                            Background="#F8FAFC"
+                            BorderBrush="#EAECF0"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="18">
+
+                            <StackPanel Spacing="12">
+
+                                <TextBlock
+                                    Text="Stream quality"
+                                    FontSize="15"
+                                    FontWeight="SemiBold"
+                                    Foreground="#101828" />
+
+                                <ComboBox
+                                    ItemsSource="{Binding StreamQualityOptions}"
+                                    SelectedItem="{Binding SelectedStreamQuality, Mode=TwoWay}"
+                                    HorizontalAlignment="Stretch"
+                                    MinHeight="44" />
+
+                                <TextBlock
+                                    Text="Quality changes apply the next time live sharing starts."
+                                    FontSize="11"
+                                    Foreground="#667085"
+                                    TextWrapping="Wrap" />
+
+                                <Border
+                                    Height="1"
+                                    Background="#E4E7EC"
+                                    Margin="0,4" />
+
+                                <StackPanel Spacing="3">
+
+                                    <TextBlock
+                                        Text="Performance"
+                                        FontSize="11"
+                                        FontWeight="SemiBold"
+                                        Foreground="#344054" />
+
+                                    <TextBlock
+                                        Text="Hardware H.264 • GPU decode • Low-latency presentation"
+                                        FontSize="11"
+                                        Foreground="#667085"
+                                        TextWrapping="Wrap" />
+
+                                </StackPanel>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </Grid>
+
+                </Border>
+
+
+                <!-- ===================================================== -->
+                <!-- Viewer remote desktop                                -->
+                <!-- ===================================================== -->
+
+                <Border
+                    x:Name="RemoteScreenCard"
+                    Background="White"
+                    BorderBrush="#E4E7EC"
+                    BorderThickness="1"
+                    CornerRadius="16"
+                    Padding="22"
+                    IsVisible="{Binding IsViewerConnected}">
+
+                    <StackPanel Spacing="14">
+
+                        <Grid ColumnDefinitions="*,Auto">
+
+                            <StackPanel
+                                Grid.Column="0"
+                                Spacing="3">
+
+                                <TextBlock
+                                    Text="Remote desktop"
+                                    FontSize="22"
+                                    FontWeight="SemiBold"
+                                    Foreground="#101828" />
+
+                                <TextBlock
+                                    Text="Control the approved host directly from the live screen."
+                                    FontSize="12"
+                                    Foreground="#667085" />
+
+                            </StackPanel>
+
+
+                            <Border
+                                Grid.Column="1"
+                                Background="#ECFDF3"
+                                BorderBrush="#ABEFC6"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                Padding="11,6"
+                                VerticalAlignment="Center"
+                                IsVisible="{Binding IsRemoteStreamActive}">
+
+                                <TextBlock
+                                    Text="● Live"
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Foreground="#067647" />
+
+                            </Border>
+
+
+                            <Border
+                                Grid.Column="1"
+                                Background="#F2F4F7"
+                                BorderBrush="#D0D5DD"
+                                BorderThickness="1"
+                                CornerRadius="18"
+                                Padding="11,6"
+                                VerticalAlignment="Center"
+                                IsVisible="{Binding !IsRemoteStreamActive}">
+
+                                <TextBlock
+                                    Text="Paused"
+                                    FontSize="11"
+                                    FontWeight="SemiBold"
+                                    Foreground="#475467" />
+
+                            </Border>
+
+                        </Grid>
+
+
+                        <!-- Viewer control hint -->
+                        <Border
+                            Background="#F0F9FF"
+                            BorderBrush="#B9E6FE"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="12">
+
+                            <TextBlock
+                                Text="{Binding RemoteControlHint}"
+                                Foreground="#026AA2"
+                                FontSize="12"
+                                TextWrapping="Wrap"
+                                TextAlignment="Center" />
+
+                        </Border>
+
+
+                        <!-- Existing input surface is preserved because the
+                             fullscreen and keyboard code-behind depend on it. -->
+                        <Border
+                            x:Name="RemoteInputSurface"
+                            Background="#0B1220"
+                            BorderBrush="#1D2939"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="6"
+                            Height="460"
+                            MinHeight="240"
+                            Focusable="True"
+                            KeyDown="RemoteInputSurface_OnKeyDown"
+                            KeyUp="RemoteInputSurface_OnKeyUp"
+                            LostFocus="RemoteInputSurface_OnLostFocus">
+
+                            <Grid>
+
+                                <!-- Production H.264 GPU viewer -->
+                                <views:RemoteVideoSurface
+                                    x:Name="RemoteH264VideoSurface"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    MinHeight="240"
+                                    IsVisible="{Binding IsViewerConnected}" />
+
+                            </Grid>
+
+                        </Border>
+
+
+                        <!-- Paused / waiting status outside the native HWND so
+                             it remains visible despite native-window airspace. -->
+                        <TextBlock
+                            Text="Waiting for the host to start or resume live sharing…"
+                            FontSize="12"
+                            Foreground="#667085"
+                            HorizontalAlignment="Center"
+                            TextWrapping="Wrap"
+                            IsVisible="{Binding !IsRemoteStreamActive}" />
+
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="12">
+
+                            <TextBlock
+                                Grid.Column="0"
+                                Text="Mouse, scrolling, and keyboard input are active while the stream is live."
+                                FontSize="11"
+                                Foreground="#667085"
+                                VerticalAlignment="Center"
+                                TextWrapping="Wrap"
+                                IsVisible="{Binding IsRemoteStreamActive}" />
+
+                            <Button
+                                Grid.Column="1"
+                                Content="Full Screen"
+                                Click="ViewFullScreen_OnClick"
+                                Height="42"
+                                MinWidth="140"
+                                HorizontalContentAlignment="Center"
+                                Background="#101828"
+                                Foreground="White"
+                                BorderBrush="#101828"
+                                BorderThickness="1"
+                                FontWeight="SemiBold"
+                                IsEnabled="{Binding IsRemoteStreamActive}" />
+
+                        </Grid>
+
+                    </StackPanel>
+
+                </Border>
+
+
+                <!-- ===================================================== -->
+                <!-- Application status                                   -->
+                <!-- ===================================================== -->
+
+                <Border
+                    Background="#FFFFFF"
+                    BorderBrush="#E4E7EC"
+                    BorderThickness="1"
+                    CornerRadius="10"
+                    Padding="13"
+                    IsVisible="{Binding HasStatusMessage}">
+
+                    <TextBlock
+                        Text="{Binding StatusMessage}"
+                        FontSize="12"
+                        TextWrapping="Wrap"
+                        TextAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Foreground="#475467" />
+
+                </Border>
+
+
+                <!-- Footer -->
+                <TextBlock
+                    Text="RemoteBridge v0.1"
+                    HorizontalAlignment="Center"
+                    Foreground="#98A2B3"
+                    FontSize="11"
+                    Margin="0,4,0,0" />
+
+            </StackPanel>
+
+        </ScrollViewer>
+
+    </Grid>
+
+</Window>

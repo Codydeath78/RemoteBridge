@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net10.0;net10.0-windows</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <TargetFrameworkIdentifier
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">.NETCoreApp</TargetFrameworkIdentifier>
+
+    <TargetFrameworkVersion
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">v10.0</TargetFrameworkVersion>
+
+    <TargetPlatformIdentifier
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">Windows</TargetPlatformIdentifier>
+
+    <TargetPlatformVersion
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">10.0.26100.0</TargetPlatformVersion>
+
+    <SupportedOSPlatformVersion
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">10.0.19041.0</SupportedOSPlatformVersion>
+
+    <EnableWindowsTargeting
+      Condition="'$(TargetFramework)' == 'net10.0-windows'">true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="12.1.2" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+    <PackageReference Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="System.Drawing.Common" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RemoteBridge.Protocol\RemoteBridge.Protocol.csproj" />
+  </ItemGroup>
+
+  <ItemGroup
+    Condition="'$(TargetFramework)' == 'net10.0-windows'">
+
+    <ProjectReference
+        Include="..\RemoteBridge.WindowsMedia\RemoteBridge.WindowsMedia.csproj" />
+
+  </ItemGroup>
+</Project>

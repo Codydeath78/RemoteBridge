@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+artifacts/
+publish/
+
+.vs/
+.idea/
+.vscode/
+
+.DS_Store
+*.user
+*.suo
+
+remote-media-error.txt
