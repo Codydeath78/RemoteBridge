@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="screenshots/appicon.png" width="250">
+  <img src="screenshots/appicon.png" width="500">
 </p>
 
 # RemoteBridge
