@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="screenshots/appicon.png" width="250">
+</p>
+
 # RemoteBridge
 
 RemoteBridge is a Windows remote desktop and screen-sharing application built with .NET, Avalonia UI, Windows Graphics Capture, Media Foundation, Direct3D 11, hardware H.264 encoding/decoding, WebSockets, and native Windows input injection.
